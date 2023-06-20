@@ -45,13 +45,13 @@ def keyboard_sell(coin_name, deal_amount, pairing_type):
     threading.Thread(target=key).start()
 
 
-def limit_buy_token(coin_name, coin_details, USDT_AMOUNT, cur_price):
+def limit_buy_token(coin_name, coin_details, usdt_amount, cur_price):
     """ sets a limit order based on the token name, USDT amount, and price to set. - USED FOR NEW LISTINGS & PUMPS
      """
 
     # print(coin_details)
     cur_price = round_down(cur_price, coin_details['priceIncrement'])
-    buy_amount = round_down(USDT_AMOUNT / cur_price, coin_details['baseIncrement'])
+    buy_amount = round_down(usdt_amount / cur_price, coin_details['baseIncrement'])
 
     order_id = kc_client.create_limit_order(coin_name + "-USDT", Client.SIDE_BUY, price=cur_price,
                                             size=buy_amount)
