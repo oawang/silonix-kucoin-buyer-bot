@@ -5,7 +5,7 @@ from pynput.keyboard import KeyCode
 from pynput import keyboard
 from requests_futures.sessions import FuturesSession
 from sty import fg
-from config import kc_client
+from kucoin_config import kc_client
 from rsrcs.useful_funcs import round_down, extract_coin_name
 from kucoin.client import Client
 from pynput.keyboard import Listener
@@ -58,6 +58,18 @@ def limit_buy_token(coin_name, coin_details, USDT_AMOUNT, cur_price):
     print(f"limit buy order {order_id} placed!")
     return order_id['orderId']
 
+
+def market_buy_token(coin_name, coin_details, USDT_AMOUNT, cur_price):
+    """ sets a limit order based on the token name, USDT amount, and price to set. - USED FOR NEW LISTINGS & PUMPS
+     """
+
+    # print(coin_details)
+    # cur_price = round_down(cur_price, coin_details['priceIncrement'])
+    buy_amount = round_down(USDT_AMOUNT / cur_price, coin_details['baseIncrement'])
+
+    order_id = kc_client.create_market_order(coin_name + "-USDT", Client.SIDE_BUY, size=buy_amount)
+    print(f"limit buy order {order_id} placed!")
+    return order_id['orderId']
 
 def sell_on_target(coin_name, deal_amount, target_price, pairing_type, refresh_rate=0.3):
     """

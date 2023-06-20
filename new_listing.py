@@ -3,7 +3,8 @@ import time
 from threading import Thread
 import requests
 from config import kc_client
-from rsrcs.coin_lib import keyboard_sell, profit_tracker, limit_buy_token, keyboard_buy
+
+from rsrcs.coin_lib import keyboard_sell, profit_tracker, limit_buy_token, market_buy_token, keyboard_buy
 from rsrcs.useful_funcs import print_bot_name, awaiting_message
 
 COIN_NAME = 'OLE'
