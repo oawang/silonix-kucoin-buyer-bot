@@ -4,12 +4,15 @@ import datetime
 from decimal import Decimal
 from bitget_config import marketApi, orderApi, accountApi, publicApi
 
-symbol = 'hamusdt_spbl'
+symbol = 'alpha1usdt_spbl'
 # symbol = 'pepeusdt_spbl'
 # symbol = 'sclpusdt_spbl'
 
 # USDT_AMOUNT = 0
-USDT_AMOUNT = 80
+USDT_AMOUNT = 40
+
+# 是否提交订单
+submitOrder = False
 
 # 是否使用线程批量提交多个挂单0.09,0.19,0.29,0.39,0.49
 use_thread_pool = True
@@ -18,18 +21,30 @@ use_thread_pool = True
 # percentage added to OG order price. ie: if price 100 retrieved and offset is 1, order price will be 101
 # good numbers for offset: around 5 to 30 percent for world premiers, and 1 to 5 for normal new listings.
 
-offsetDecimal_9 = Decimal(9) / Decimal(100)
-offsetDecimal_19 = Decimal(19) / Decimal(100)
-offsetDecimal_29 = Decimal(29) / Decimal(100)
-offsetDecimal_39 = Decimal(39) / Decimal(100)
-offsetDecimal_49 = Decimal(49) / Decimal(100)
+useOffset9 = False
+
+if useOffset9:
+    offsetDecimal_9 = Decimal(9) / Decimal(100)
+    offsetDecimal_19 = Decimal(19) / Decimal(100)
+    offsetDecimal_29 = Decimal(29) / Decimal(100)
+    offsetDecimal_39 = Decimal(39) / Decimal(100)
+    offsetDecimal_49 = Decimal(49) / Decimal(100)
+    offsetDecimal_59 = Decimal(5) / Decimal(100)
+else:
+    offsetDecimal_9 = Decimal(5) / Decimal(100)
+    offsetDecimal_19 = Decimal(10) / Decimal(100)
+    offsetDecimal_29 = Decimal(15) / Decimal(100)
+    offsetDecimal_39 = Decimal(20) / Decimal(100)
+    offsetDecimal_49 = Decimal(25) / Decimal(100)
+    offsetDecimal_59 = Decimal(30) / Decimal(100)
 
 offsetDecimalArr = [
     offsetDecimal_9,
     offsetDecimal_19,
     offsetDecimal_29,
-    # offsetDecimal_39,
-    # offsetDecimal_49
+    offsetDecimal_39,
+    offsetDecimal_49,
+    offsetDecimal_59
 ]
 
 def main():
@@ -66,10 +81,13 @@ def main():
     quantityScale = int(coin_details['quantityScale'])
 
     # usdt_amount = 1
-    if use_thread_pool:
-        batch_create_order_use_pool(usdt_amount, cur_price, offsetDecimalArr, priceScale, quantityScale)
+    if submitOrder:
+        if use_thread_pool:
+            batch_create_order_use_pool(usdt_amount, cur_price, offsetDecimalArr, priceScale, quantityScale)
+        else:
+            do_create_order(usdt_amount, cur_price, offsetDecimal_9, priceScale, quantityScale)
     else:
-        do_create_order(usdt_amount, cur_price, offsetDecimal_9, priceScale, quantityScale)
+        print("不提交订单")
 
 
 def do_create_order(usdt_amount, cur_price: Decimal, offsetDecimal: Decimal, priceScale: int, quantityScale: int):
